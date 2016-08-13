@@ -16,6 +16,11 @@ write-files:
           sleep 1 && echo .;
         done;
       exit $?
+  - path: /etc/hosts
+    permissions: '0755'
+    content: |
+      127.0.0.1 localhost
+      <static-ip> localregistry
 
 coreos:
   etcd2:
@@ -58,7 +63,7 @@ coreos:
         - name: 50-docker-options.conf
           content: |
             [Service]
-            Environment='DOCKER_OPTS=__DOCKER_OPTIONS__'
+            Environment='DOCKER_OPTS=--debug -H tcp://127.0.0.1:4243 -H unix:///var/run/docker.sock --insecure-registry localregistry:5000'
     - name: early-docker.service
       drop-ins:
         - __PROXY_LINE__name: http-proxy.conf
